@@ -7,8 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
-@Table(name = "applications")
+@Table(name = "applications",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"user_id", "job_posting_id"})
+        })
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,4 +35,6 @@ public class Application {
     @Enumerated(EnumType.STRING)
     private ApplicationStatus applicationStatus;
 
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 }
