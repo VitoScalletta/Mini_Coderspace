@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "job_postings")
 @Getter
@@ -23,7 +25,7 @@ public class JobPosting {
 
     @ManyToOne
     @JoinColumn(name = "company_id")
-    private User user;
+    private User company;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -31,4 +33,7 @@ public class JobPosting {
 
     @Column(nullable = false,length = 2000)
     private String description;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 }
