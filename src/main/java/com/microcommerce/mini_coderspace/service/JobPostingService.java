@@ -9,8 +9,10 @@ import com.microcommerce.mini_coderspace.repository.JobPostingRepository;
 import com.microcommerce.mini_coderspace.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,5 +37,17 @@ public class JobPostingService {
                 savedJobPosting.getStatus(),
                 savedJobPosting.getCreatedAt()
         );
+    }
+
+    public List<JobPostingResponse> getAllJobPostings() {
+        List<JobPosting> jobPostings = jobPostingRepository.findAll();
+        return jobPostings.stream()
+                .map(jobPosting -> new JobPostingResponse(
+                        jobPosting.getId(),
+                        jobPosting.getTitle(),
+                        jobPosting.getDescription(),
+                        jobPosting.getStatus(),
+                        jobPosting.getCreatedAt()
+                )).toList();
     }
 }
