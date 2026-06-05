@@ -26,8 +26,14 @@ public class JobPostingService {
         jobPosting.setStatus(JobPostingStatus.ACTIVE);
         User company = userRepository.findById(createJobPostingRequest.getCompanyId())
                 .orElseThrow(() -> new RuntimeException("Bu ID'ye ait şirket bulunamadı"));
-
+        jobPosting.setCompany(company);
         JobPosting savedJobPosting = jobPostingRepository.save(jobPosting);
-
+        return new JobPostingResponse(
+                savedJobPosting.getId(),
+                savedJobPosting.getTitle(),
+                savedJobPosting.getDescription(),
+                savedJobPosting.getStatus(),
+                savedJobPosting.getCreatedAt()
+        );
     }
 }
