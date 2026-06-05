@@ -1,6 +1,7 @@
 package com.microcommerce.mini_coderspace.service;
 
 import com.microcommerce.mini_coderspace.dto.request.CreateJobPostingRequest;
+import com.microcommerce.mini_coderspace.dto.request.UpdateJobPostingRequest;
 import com.microcommerce.mini_coderspace.dto.response.JobPostingResponse;
 import com.microcommerce.mini_coderspace.entity.JobPosting;
 import com.microcommerce.mini_coderspace.entity.User;
@@ -49,5 +50,21 @@ public class JobPostingService {
                         jobPosting.getStatus(),
                         jobPosting.getCreatedAt()
                 )).toList();
+    }
+
+    public JobPostingResponse updateJobPosting(Long id, UpdateJobPostingRequest updateJobPostingRequest) {
+        JobPosting existJob = jobPostingRepository.findById(id).
+                orElseThrow(() -> new RuntimeException("İlan bulunamadı"));
+
+        JobPosting savedJobPosting = jobPostingRepository.save(existJob);
+
+        return new JobPostingResponse(
+                savedJobPosting.getId(),
+                savedJobPosting.getTitle(),
+                savedJobPosting.getDescription(),
+                savedJobPosting.getStatus(),
+                savedJobPosting.getCreatedAt()
+        );
+
     }
 }

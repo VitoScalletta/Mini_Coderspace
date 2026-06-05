@@ -1,6 +1,7 @@
 package com.microcommerce.mini_coderspace.controller;
 
 import com.microcommerce.mini_coderspace.dto.request.CreateJobPostingRequest;
+import com.microcommerce.mini_coderspace.dto.request.UpdateJobPostingRequest;
 import com.microcommerce.mini_coderspace.dto.response.JobPostingResponse;
 import com.microcommerce.mini_coderspace.entity.JobPosting;
 import com.microcommerce.mini_coderspace.service.JobPostingService;
@@ -29,6 +30,12 @@ public class JobPostingController {
     @GetMapping
     public ResponseEntity<List<JobPostingResponse>> getAllJobPostings() {
         List<JobPostingResponse> response = jobPostingService.getAllJobPostings();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<JobPostingResponse> updateJobPosting(@PathVariable Long id, @RequestBody UpdateJobPostingRequest request) {
+        JobPostingResponse response = jobPostingService.updateJobPosting(id,request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
