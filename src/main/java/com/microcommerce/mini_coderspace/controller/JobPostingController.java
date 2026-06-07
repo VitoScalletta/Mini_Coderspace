@@ -38,4 +38,10 @@ public class JobPostingController {
         JobPostingResponse response = jobPostingService.updateJobPosting(id,request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<JobPostingResponse> deleteJobPosting(@PathVariable Long id) {
+        jobPostingService.deleteJobPosting(id);
+        return ResponseEntity.ok().build();
+    }
 }

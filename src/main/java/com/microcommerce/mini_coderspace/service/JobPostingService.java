@@ -65,6 +65,11 @@ public class JobPostingService {
                 savedJobPosting.getStatus(),
                 savedJobPosting.getCreatedAt()
         );
+    }
 
+    public void deleteJobPosting(Long id) {
+        JobPosting willBeDeleted = jobPostingRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("İlan bulunamadı"));
+        jobPostingRepository.delete(willBeDeleted);
     }
 }
