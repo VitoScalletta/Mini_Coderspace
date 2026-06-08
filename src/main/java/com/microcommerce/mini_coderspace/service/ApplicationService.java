@@ -1,6 +1,7 @@
 package com.microcommerce.mini_coderspace.service;
 
 import com.microcommerce.mini_coderspace.dto.request.ApplicationRequest;
+import com.microcommerce.mini_coderspace.dto.request.UpdateApplicationStatusRequest;
 import com.microcommerce.mini_coderspace.dto.response.ApplicationResponse;
 import com.microcommerce.mini_coderspace.entity.Application;
 import com.microcommerce.mini_coderspace.entity.JobPosting;
@@ -12,7 +13,6 @@ import com.microcommerce.mini_coderspace.repository.ApplicationRepository;
 import com.microcommerce.mini_coderspace.repository.JobPostingRepository;
 import com.microcommerce.mini_coderspace.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -56,6 +56,27 @@ public class ApplicationService {
                 savedApplication.getCreatedAt(),
                 candidate.getId(),
                 jobPosting.getId()
+        );
+    }
+
+    public ApplicationResponse updateApplication(Long applicationId,UpdateApplicationStatusRequest request) {
+        Long companyId = request.getCompanyId();
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new  RuntimeException("Başvuru bulunamadı ID : "+ applicationId));
+        User company = userRepository.findById(companyId)
+                .orElseThrow(() -> new RuntimeException("Şirket bulunamadı ID : " + companyId));
+
+        if (company.getUserType() != UserType.COMPANY || !company.getId().equals(application.getJobPosting().getCompany().getId())) {
+            throw  new RuntimeException("Başvuruya Müdahale edemezsiniz!!");
+        }
+        application.setApplicationStatus(request.getNewStatus());
+        Application savedApplication = applicationRepository.save(application);
+        return new ApplicationResponse(
+                savedApplication.getId(),
+                savedApplication.getApplicationStatus(),
+                savedApplication.getCreatedAt(),
+                savedApplication.getUser().getId(),
+                savedApplication.getJobPosting().getId()
         );
     }
 }

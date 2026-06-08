@@ -55,6 +55,15 @@ public class JobPostingService {
     public JobPostingResponse updateJobPosting(Long id, UpdateJobPostingRequest updateJobPostingRequest) {
         JobPosting existJob = jobPostingRepository.findById(id).
                 orElseThrow(() -> new RuntimeException("İlan bulunamadı"));
+        Long companyId = updateJobPostingRequest.getCompanyId();
+
+        if (!existJob.getCompany().getId().equals(companyId)) {
+            throw new RuntimeException("Bu ilanın sahibi siz değilsiniz");
+        }
+
+        existJob.setTitle(updateJobPostingRequest.getTitle());
+        existJob.setDescription(updateJobPostingRequest.getDescription());
+        existJob.setStatus(updateJobPostingRequest.getStatus());
 
         JobPosting savedJobPosting = jobPostingRepository.save(existJob);
 

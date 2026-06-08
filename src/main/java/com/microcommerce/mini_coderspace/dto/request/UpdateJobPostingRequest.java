@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UpdateJobPostingRequest {
+    private Long companyId;
     private String title;
     private String description;
     private JobPostingStatus status;
