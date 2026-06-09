@@ -29,10 +29,10 @@ public class JwtService {
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder()
                 .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername()) // Email'i koyuyoruz
-                .setIssuedAt(new Date(System.currentTimeMillis())) // Veriliş tarihi: ŞU AN
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // Bitiş tarihi: 24 SAAT SONRA
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256) // Güvenli imzamızı atıyoruz
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
