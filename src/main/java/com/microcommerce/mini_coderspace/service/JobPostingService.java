@@ -9,6 +9,7 @@ import com.microcommerce.mini_coderspace.enums.JobPostingStatus;
 import com.microcommerce.mini_coderspace.repository.JobPostingRepository;
 import com.microcommerce.mini_coderspace.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -27,7 +28,10 @@ public class JobPostingService {
         jobPosting.setDescription(createJobPostingRequest.getDescription());
         jobPosting.setCreatedAt(LocalDateTime.now());
         jobPosting.setStatus(JobPostingStatus.ACTIVE);
-        User company = userRepository.findById(createJobPostingRequest.getCompanyId())
+
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User company = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("Bu ID'ye ait şirket bulunamadı"));
         jobPosting.setCompany(company);
         JobPosting savedJobPosting = jobPostingRepository.save(jobPosting);
