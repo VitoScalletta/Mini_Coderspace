@@ -44,8 +44,18 @@ public class JobPostingService {
         );
     }
 
-    public List<JobPostingResponse> getAllJobPostings() {
-        List<JobPosting> jobPostings = jobPostingRepository.findAll();
+    public List<JobPostingResponse> getAllJobPostings(String keyword,JobPostingStatus status) {
+        List<JobPosting> jobPostings;
+        if(keyword != null || status != null){
+            jobPostings = jobPostingRepository.searchByKeywordAndStatus(keyword, status);
+        }
+        else if(keyword != null ){
+            jobPostings = jobPostingRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword);
+        }
+        else {
+            jobPostings = jobPostingRepository.findAll();
+        }
+
         return jobPostings.stream()
                 .map(jobPosting -> new JobPostingResponse(
                         jobPosting.getId(),
@@ -59,9 +69,10 @@ public class JobPostingService {
     public JobPostingResponse updateJobPosting(Long id, UpdateJobPostingRequest updateJobPostingRequest) {
         JobPosting existJob = jobPostingRepository.findById(id).
                 orElseThrow(() -> new RuntimeException("İlan bulunamadı"));
-        Long companyId = updateJobPostingRequest.getCompanyId();
 
-        if (!existJob.getCompany().getId().equals(companyId)) {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (!existJob.getCompany().getId().equals(userEmail)) {
             throw new RuntimeException("Bu ilanın sahibi siz değilsiniz");
         }
 
@@ -83,6 +94,10 @@ public class JobPostingService {
     public void deleteJobPosting(Long id) {
         JobPosting willBeDeleted = jobPostingRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("İlan bulunamadı"));
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!willBeDeleted.getCompany().getId().equals(userEmail)) {
+            throw new RuntimeException("Bu ilanı silme yetkiniz yok");
+        }
         jobPostingRepository.delete(willBeDeleted);
     }
 }
