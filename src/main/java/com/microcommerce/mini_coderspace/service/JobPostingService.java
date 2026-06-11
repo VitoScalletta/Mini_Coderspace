@@ -46,7 +46,7 @@ public class JobPostingService {
 
     public List<JobPostingResponse> getAllJobPostings(String keyword,JobPostingStatus status) {
         List<JobPosting> jobPostings;
-        if(keyword != null || status != null){
+        if(keyword != null && status != null){
             jobPostings = jobPostingRepository.searchByKeywordAndStatus(keyword, status);
         }
         else if(keyword != null ){
@@ -72,7 +72,7 @@ public class JobPostingService {
 
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        if (!existJob.getCompany().getId().equals(userEmail)) {
+        if (!existJob.getCompany().getEmail().equals(userEmail)) {
             throw new RuntimeException("Bu ilanın sahibi siz değilsiniz");
         }
 
@@ -95,7 +95,7 @@ public class JobPostingService {
         JobPosting willBeDeleted = jobPostingRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("İlan bulunamadı"));
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (!willBeDeleted.getCompany().getId().equals(userEmail)) {
+        if (!willBeDeleted.getCompany().getEmail().equals(userEmail)) {
             throw new RuntimeException("Bu ilanı silme yetkiniz yok");
         }
         jobPostingRepository.delete(willBeDeleted);
