@@ -6,6 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ApplicationRequest {
-    private Long candidateId;
     private Long jobPostingId;
 }

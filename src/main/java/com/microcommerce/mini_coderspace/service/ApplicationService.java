@@ -13,6 +13,7 @@ import com.microcommerce.mini_coderspace.repository.ApplicationRepository;
 import com.microcommerce.mini_coderspace.repository.JobPostingRepository;
 import com.microcommerce.mini_coderspace.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,13 +25,13 @@ public class ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final UserRepository userRepository;
     public ApplicationResponse createApplication(ApplicationRequest request) {
-        Long candidateId = request.getCandidateId();
         Long jobPostingId = request.getJobPostingId();
 
         JobPosting jobPosting = jobPostingRepository.findById(jobPostingId)
                 .orElseThrow(() -> new RuntimeException("İlan bulunamadı ID:  " + jobPostingId));
-        User candidate = userRepository.findById(candidateId)
-                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı ID: " + candidateId ));
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User candidate = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı " ));
 
         if (candidate.getUserType() != UserType.CANDIDATE) {
             throw new RuntimeException("Sadece adaylar ilanlara başvurabilir");
@@ -60,11 +61,11 @@ public class ApplicationService {
     }
 
     public ApplicationResponse updateApplication(Long applicationId,UpdateApplicationStatusRequest request) {
-        Long companyId = request.getCompanyId();
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new  RuntimeException("Başvuru bulunamadı ID : "+ applicationId));
-        User company = userRepository.findById(companyId)
-                .orElseThrow(() -> new RuntimeException("Şirket bulunamadı ID : " + companyId));
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User company = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("Sisteme giriş yapan şirket bulunamadı!"));
 
         if (company.getUserType() != UserType.COMPANY || !company.getId().equals(application.getJobPosting().getCompany().getId())) {
             throw  new RuntimeException("Başvuruya Müdahale edemezsiniz!!");
